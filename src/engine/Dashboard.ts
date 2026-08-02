@@ -9,6 +9,8 @@ import { HUB_CITIES, HubCity } from '@/data/cities';
 import { DataProvider, FlightRoute, DashboardData } from '@/data/DataProvider';
 import { CameraDemo } from '@/engine/CameraDemo';
 import { StatCards } from '@/ui/StatCards';
+import { RouteTicker } from '@/ui/RouteTicker';
+import { HUDOverlay } from '@/ui/HUDOverlay';
 
 /**
  * Core dashboard orchestrator.
@@ -56,6 +58,8 @@ export class EarthDashboard {
   private arcEntries: Map<string, ArcEntry> = new Map();
   private dashboardData: DashboardData | null = null;
   private statCards!: StatCards;
+  private routeTicker!: RouteTicker;
+  private hudOverlay!: HUDOverlay;
 
   // -- Cinematic camera
   private cameraDemo!: CameraDemo;
@@ -98,14 +102,24 @@ export class EarthDashboard {
     this.cameraDemo.onActivate = () => {
       this.controls.enabled = false;
       this.statCards.dim();
+      this.routeTicker.dim();
+      this.hudOverlay.dim();
     };
     this.cameraDemo.onDeactivate = () => {
       this.controls.enabled = true;
       this.statCards.undim();
+      this.routeTicker.undim();
+      this.hudOverlay.undim();
     };
 
     // Stat cards — glassmorphism overlay for real-time flight stats
     this.statCards = new StatCards(this.mountPoint!);
+
+    // Route ticker — scrolling marquee of active flight routes
+    this.routeTicker = new RouteTicker(this.mountPoint!);
+
+    // HUD overlay — data source, time, active count, legend
+    this.hudOverlay = new HUDOverlay(this.mountPoint!);
 
     // Kick off texture loading (async -- globe created on completion)
     this.loadTextures();
@@ -201,8 +215,10 @@ export class EarthDashboard {
         this.loadingEl = null;
       }, 500);
     }
-    // Reveal stat cards once textures are loaded
+    // Reveal all UI overlays once textures are loaded
     this.statCards.show();
+    this.routeTicker.show();
+    this.hudOverlay.show();
   }
 
   // -- Texture Loading
@@ -292,11 +308,17 @@ export class EarthDashboard {
     // DataProvider in simulation mode (real API fetch is available via setApiEndpoint)
     this.dataProvider = new DataProvider(true);
 
-    // Subscribe to route updates — sync the 3D scene + stat cards
-    this.dataProvider.subscribe((data) => {
+    // Subscribe to route updates — sync the 3D scene + all UI overlays
+    this.dataProvider.subscribe((data, source) => {
       this.dashboardData = data;
       this.syncRoutes(data.routes);
       this.statCards.update(data);
+      this.routeTicker.update(data);
+      this.hudOverlay.update(
+        data,
+        source,
+        new Date(Date.now() * this.timeScale),
+      );
     });
 
     this.dataProvider.start();
@@ -415,6 +437,8 @@ export class EarthDashboard {
     }
     this.dataProvider?.stop();
     this.statCards?.dispose();
+    this.routeTicker?.dispose();
+    this.hudOverlay?.dispose();
   }
 
   private animate = (): void => {
