@@ -28,10 +28,10 @@ export interface PacketSystemOptions {
 }
 
 const DEFAULT_OPTIONS: PacketSystemOptions = {
-  packetsPerArc: 3,
+  packetsPerArc: 5,
   baseSpeed: 0.15, // 0 to 1 progress per second for a typical arc
   speedVariance: 0.3,
-  packetSize: 0.03,
+  packetSize: 0.025,
   color: 0xff6b35,
   fadeDuration: 0.08,
 };

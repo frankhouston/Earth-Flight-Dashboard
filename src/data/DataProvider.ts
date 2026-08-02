@@ -52,11 +52,11 @@ export type DataSource = 'simulation' | 'api';
 /* ---- Simulation tunables */
 
 const TICK_RATE = 30; // fps for data updates
-const SIM_SPAWN_INTERVAL_MIN = 3; // seconds between new route spawns
-const SIM_SPAWN_INTERVAL_MAX = 8;
+const SIM_SPAWN_INTERVAL_MIN = 0.8; // seconds between new route spawns
+const SIM_SPAWN_INTERVAL_MAX = 1.5;
 const SIM_ROUTE_SPEED_MIN = 0.05; // normalized units/sec
-const SIM_ROUTE_SPEED_MAX = 0.15;
-const SIM_MAX_ACTIVE_ROUTES = 30;
+const SIM_ROUTE_SPEED_MAX = 0.20;
+const SIM_MAX_ACTIVE_ROUTES = 80;
 const SIM_FADE_DURATION = 0.08; // progress range at arc endpoints
 
 /** Easing function: ease-in-out cubic */
