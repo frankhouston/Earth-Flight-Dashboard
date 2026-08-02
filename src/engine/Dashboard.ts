@@ -8,6 +8,7 @@ import { PacketSystem } from '@/engine/arcs/PacketSystem';
 import { HUB_CITIES, HubCity } from '@/data/cities';
 import { DataProvider, FlightRoute, DashboardData } from '@/data/DataProvider';
 import { CameraDemo } from '@/engine/CameraDemo';
+import { StatCards } from '@/ui/StatCards';
 
 /**
  * Core dashboard orchestrator.
@@ -54,6 +55,7 @@ export class EarthDashboard {
   private arcMaterial!: THREE.LineBasicMaterial;
   private arcEntries: Map<string, ArcEntry> = new Map();
   private dashboardData: DashboardData | null = null;
+  private statCards!: StatCards;
 
   // -- Cinematic camera
   private cameraDemo!: CameraDemo;
@@ -95,10 +97,15 @@ export class EarthDashboard {
     this.cameraDemo = new CameraDemo(this.camera, 12);
     this.cameraDemo.onActivate = () => {
       this.controls.enabled = false;
+      this.statCards.dim();
     };
     this.cameraDemo.onDeactivate = () => {
       this.controls.enabled = true;
+      this.statCards.undim();
     };
+
+    // Stat cards — glassmorphism overlay for real-time flight stats
+    this.statCards = new StatCards(this.mountPoint!);
 
     // Kick off texture loading (async -- globe created on completion)
     this.loadTextures();
@@ -194,6 +201,8 @@ export class EarthDashboard {
         this.loadingEl = null;
       }, 500);
     }
+    // Reveal stat cards once textures are loaded
+    this.statCards.show();
   }
 
   // -- Texture Loading
@@ -283,10 +292,11 @@ export class EarthDashboard {
     // DataProvider in simulation mode (real API fetch is available via setApiEndpoint)
     this.dataProvider = new DataProvider(true);
 
-    // Subscribe to route updates — sync the 3D scene
+    // Subscribe to route updates — sync the 3D scene + stat cards
     this.dataProvider.subscribe((data) => {
       this.dashboardData = data;
       this.syncRoutes(data.routes);
+      this.statCards.update(data);
     });
 
     this.dataProvider.start();
@@ -404,6 +414,7 @@ export class EarthDashboard {
       this.animationId = null;
     }
     this.dataProvider?.stop();
+    this.statCards?.dispose();
   }
 
   private animate = (): void => {
