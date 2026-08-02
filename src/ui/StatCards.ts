@@ -157,6 +157,35 @@ export class StatCards {
       .stat-card[data-color] .stat-card__icon {
         filter: drop-shadow(0 0 4px var(--card-color));
       }
+
+      /* ---- Responsive: tablet ---- */
+      @media (max-width: 768px) {
+        .stat-cards {
+          width: calc(100vw - 24px);
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+        }
+
+        .stat-card {
+          padding: 12px;
+        }
+
+        .stat-card__icon { font-size: 15px; }
+        .stat-card__label { font-size: 8px; }
+        .stat-card__value { font-size: 19px; }
+        .stat-card__sub { font-size: 9px; }
+      }
+
+      /* ---- Responsive: mobile ---- */
+      @media (max-width: 480px) {
+        .stat-cards {
+          grid-template-columns: 1fr;
+          gap: 8px;
+          width: calc(100vw - 16px);
+        }
+
+        .stat-card__value { font-size: 16px; }
+      }
     `;
     document.head.appendChild(style);
     return style;

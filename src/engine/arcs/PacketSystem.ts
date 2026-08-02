@@ -214,10 +214,9 @@ export class PacketSystem {
         alpha = 1.0;
       }
 
-      // Set sprite opacity
+      // Set sprite opacity (Three.js auto-uploads changed uniforms)
       if (packet.sprite.material instanceof THREE.SpriteMaterial) {
         packet.sprite.material.opacity = alpha;
-        packet.sprite.material.needsUpdate = true;
       }
 
       // Optional: scale up at midpoint for "pulse" effect

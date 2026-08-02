@@ -131,6 +131,19 @@ export class RouteTicker {
         0% { transform: translateX(0); }
         100% { transform: translateX(calc(-100% - 16px * var(--ticker-item-count, 1))); }
       }
+
+      /* ---- Responsive ---- */
+      @media (max-width: 768px) {
+        .route-ticker__item { font-size: 10px; gap: 4px; }
+        .route-ticker__track { padding: 6px 12px; }
+        .route-ticker__dot { width: 5px; height: 5px; }
+        .route-ticker__progress { width: 24px; }
+      }
+
+      @media (max-width: 480px) {
+        .route-ticker__item { font-size: 9px; }
+        .route-ticker__track { padding: 4px 10px; }
+      }
     `;
     document.head.appendChild(style);
     return style;

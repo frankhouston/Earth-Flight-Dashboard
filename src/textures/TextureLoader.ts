@@ -56,6 +56,7 @@ export const DEFAULT_TEXTURES: TextureConfig = {
 export class GlobeTextureLoader {
   private anisotropy: number = 1;
   private cache: Map<string, THREE.Texture> = new Map();
+  private textureLoader: THREE.TextureLoader = new THREE.TextureLoader();
 
   /** Sets the maximum anisotropy level for loaded textures. */
   setMaxAnisotropy(value: number): void {
@@ -159,8 +160,7 @@ export class GlobeTextureLoader {
         return;
       }
 
-      const textureLoader = new THREE.TextureLoader();
-      textureLoader.load(
+      this.textureLoader.load(
         url,
         (texture: THREE.Texture) => {
           // Configure texture properties for Earth rendering

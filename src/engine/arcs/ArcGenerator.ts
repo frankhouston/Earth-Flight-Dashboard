@@ -192,7 +192,6 @@ export function createArcLine(
 ): THREE.Line {
   const geometry = new THREE.BufferGeometry().setFromPoints(arc.points);
   const line = new THREE.Line(geometry, material);
-  line.computeLineDistances();
   return line;
 }
 

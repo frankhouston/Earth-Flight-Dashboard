@@ -179,6 +179,20 @@ export class HUDOverlay {
       .hud-overlay.dimmed {
         opacity: 0.3;
       }
+
+      /* ---- Responsive ---- */
+      @media (max-width: 768px) {
+        .hud-topbar { gap: 8px; padding: 6px 10px; }
+        .hud-badge { font-size: 8px; padding: 3px 8px; }
+        .hud-time { font-size: 11px; }
+        .hud-active { font-size: 11px; }
+        .hud-legend { padding: 4px 8px; gap: 6px; }
+      }
+
+      @media (max-width: 480px) {
+        .hud-badge { display: none; }
+        .hud-time { display: none; }
+      }
     `;
     document.head.appendChild(style);
     return style;

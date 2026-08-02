@@ -350,7 +350,7 @@ export class EarthDashboard {
     const arc = createGreatCircleArc(route.from, route.to, {
       radius: 1.0,
       altitude: 0.06,
-      segments: 64,
+      segments: 32,
       curveFactor: 1.0,
     });
 
