@@ -43,11 +43,11 @@ export interface TextureLoadOptions {
   signal?: AbortSignal;
 }
 
-/** Default Earth texture URLs from Three.js examples */
+/** Default Earth texture URLs from Three.js examples (planets subdirectory) */
 export const DEFAULT_TEXTURES: TextureConfig = {
-  day: 'https://threejs.org/examples/textures/earth_atmos_color.jpg',
-  night: 'https://threejs.org/examples/textures/earth_nightmap.jpg',
-  elevation: 'https://threejs.org/examples/textures/earth_bump_1k.jpg',
+  day: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_day_4096.jpg',
+  night: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_night_4096.jpg',
+  elevation: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_bump_roughness_clouds_4096.jpg',
 };
 
 /**
@@ -61,6 +61,11 @@ export class GlobeTextureLoader {
   /** Sets the maximum anisotropy level for loaded textures. */
   setMaxAnisotropy(value: number): void {
     this.anisotropy = value;
+  }
+
+  /** Clears the in-memory texture cache. */
+  clearCache(): void {
+    this.cache.clear();
   }
 
   /**
