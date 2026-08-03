@@ -118,6 +118,15 @@ const server = http.createServer((req, res) => {
     console.log('[capture] Set rotation speed to 2.0');
   }
 
+  // Hide UI for clean Pluto-only capture (no GUI in APNG)
+  await page.evaluate(() => {
+    const ui = document.getElementById('ui');
+    const status = document.getElementById('status');
+    if (ui) ui.style.display = 'none';
+    if (status) status.style.display = 'none';
+  });
+  console.log('[capture] UI hidden for clean Pluto-only capture');
+
   // Prepare frames directory
   if (fs.existsSync(FRAMES_DIR)) {
     fs.rmSync(FRAMES_DIR, { recursive: true });
