@@ -21,7 +21,7 @@ const puppeteer = require("puppeteer");
 const WIDTH = 1280;
 const HEIGHT = 720;
 const FPS = 15;
-const CAPTURE_SECONDS = 60;
+const CAPTURE_SECONDS = 150; // Cover one full cinematic tour cycle (~148s)
 const FRAME_COUNT = FPS * CAPTURE_SECONDS;
 const PORT = 8400;
 const FRAMES_DIR = '/tmp/earth-frames';
@@ -126,9 +126,16 @@ async function main() {
     });
   });
 
-  // Wait for cinematic mode to activate (idle threshold = 12s in Dashboard.ts)
-  console.log('[capture] Waiting for cinematic tour to start (idle threshold ~12s)...');
-  await new Promise(r => setTimeout(r, 15000));
+  // Give a moment for the first render frame
+  await new Promise(r => setTimeout(r, 2000));
+
+  // Start cinematic tour (forced — not relying on idle timer)
+  console.log('[capture] Starting cinematic tour...');
+  await page.evaluate(() => {
+    if (window.cameraDemo) {
+      window.cameraDemo.startCinematic();
+    }
+  });
 
   // Capture frames for the full tour
   console.log(`[capture] Capturing ${FRAME_COUNT} frames (${CAPTURE_SECONDS}s at ${FPS}fps)...`);
@@ -160,48 +167,38 @@ async function main() {
   server.close();
 
   // --- Generate APNGs with ffmpeg ---
-  const TOTAL_FRAMES = FRAME_COUNT;
-  const MIDPOINT = Math.floor(TOTAL_FRAMES / 2); // 450 frames = 30 seconds
+  // Use 480x270 resolution with every 10th frame for web-friendly sizes
+  const CAPTURE_W = 480;
+  const CAPTURE_H = 270;
+  const MIDPOINT = FRAME_COUNT / 2;
 
-  // Full tour APNG
-  console.log('[capture] Building full-tour APNG...');
+  // Northern Hemisphere segment: frames 0-449, every 10th frame
+  console.log('[capture] Building northern-hemisphere APNG...');
   execSync(
     `ffmpeg -y -framerate ${FPS} -i ${FRAMES_DIR}/frame-%04d.png ` +
-    `-vf "scale=${WIDTH}:${HEIGHT}:flags=lanczos" ` +
-    `-plays 0 -f apng -lossless 1 -pix_fmt rgba ` +
-    `"${OUTPUT_DIR}/full-tour.png"`,
-    { stdio: 'inherit' }
-  );
-
-  // Northern Hemisphere segment (frames 0 to MIDPOINT)
-  console.log('[capture] Building northern-hemisphere APNG (first 30s)...');
-  execSync(
-    `ffmpeg -y -framerate ${FPS} -i ${FRAMES_DIR}/frame-%04d.png ` +
-    `-vf "select='lt(n\\,${MIDPOINT})', setpts=N/FRAME_RATE/TB" ` +
-    `-vsync 0 -plays 0 -f apng -lossless 1 -pix_fmt rgba ` +
+    `-vf "select='between(n\\,0\\,449)*not(mod(n\\,10))', setpts=N/FRAME_RATE/TB, scale=${CAPTURE_W}:${CAPTURE_H}:flags=lanczos" ` +
+    `-vsync 0 -plays 0 -f apng -lossless 1 -pix_fmt rgb565 ` +
     `-metadata title="Earth Tour - Northern Hemisphere" ` +
     `"${OUTPUT_DIR}/earth-tour-northern-hemisphere.png"`,
     { stdio: 'inherit' }
   );
 
-  // Southern Hemisphere segment (frames MIDPOINT to TOTAL_FRAMES)
-  console.log('[capture] Building southern-hemisphere APNG (last 30s)...');
+  // Southern Hemisphere segment: frames 450-899, every 10th frame
+  console.log('[capture] Building southern-hemisphere APNG...');
   execSync(
     `ffmpeg -y -framerate ${FPS} -i ${FRAMES_DIR}/frame-%04d.png ` +
-    `-vf "select='gte(n\\,${MIDPOINT})', setpts=N/FRAME_RATE/TB" ` +
-    `-vsync 0 -plays 0 -f apng -lossless 1 -pix_fmt rgba ` +
+    `-vf "select='gte(n\\,450)*not(mod(n\\,10))', setpts=N/FRAME_RATE/TB, scale=${CAPTURE_W}:${CAPTURE_H}:flags=lanczos" ` +
+    `-vsync 0 -plays 0 -f apng -lossless 1 -pix_fmt rgb565 ` +
     `-metadata title="Earth Tour - Southern Hemisphere" ` +
     `"${OUTPUT_DIR}/earth-tour-south-hemisphere.png"`,
     { stdio: 'inherit' }
   );
 
   // Get sizes
-  const fullStat = fs.statSync(path.join(OUTPUT_DIR, 'full-tour.png'));
   const northStat = fs.statSync(path.join(OUTPUT_DIR, 'earth-tour-northern-hemisphere.png'));
   const southStat = fs.statSync(path.join(OUTPUT_DIR, 'earth-tour-south-hemisphere.png'));
 
   console.log('\n[capture] Results:');
-  console.log(`  full-tour.png:                      ${(fullStat.size / 1024 / 1024).toFixed(1)} MB`);
   console.log(`  earth-tour-northern-hemisphere.png: ${(northStat.size / 1024 / 1024).toFixed(1)} MB`);
   console.log(`  earth-tour-south-hemisphere.png:   ${(southStat.size / 1024 / 1024).toFixed(1)} MB`);
   console.log('\n[capture] Done!');
