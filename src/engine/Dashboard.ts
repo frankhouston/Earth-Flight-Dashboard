@@ -80,7 +80,7 @@ export class EarthDashboard {
   private isTimeDriven: boolean = true;
 
   // -- Reset threshold
-  private resetThreshold: number = 100; // Total flights before auto-reset
+  private resetThreshold: number = 200; // Total flights before auto-reset
 
   // -- Loading UI
   private loadingEl: HTMLElement | null = null;

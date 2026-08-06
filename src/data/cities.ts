@@ -139,6 +139,8 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'NRT', name: 'Tokyo Narita', country: 'JP', lat: 35.7647, lon: 140.3864, volume: 0.75, type: 'passenger' },
   { code: 'KIX', name: 'Osaka Kansai', country: 'JP', lat: 34.4257, lon: 135.2445, volume: 0.45, type: 'passenger' },
   { code: 'CTS', name: 'Sapporo', country: 'JP', lat: 42.7925, lon: 141.6633, volume: 0.4, type: 'passenger' }, // New Chitose Airport (CTS), Hokkaido
+  { code: 'OKA', name: 'Okinawa', country: 'JP', lat: 26.2036, lon: 127.6505, volume: 0.25, type: 'passenger' },
+  { code: 'IWO', name: 'Iwo Jima', country: 'JP', lat: 24.4667, lon: 141.3333, volume: 0.05, type: 'cargo' }, // Volcanic island, US/Japan Military Base
   { code: 'PVG', name: 'Shanghai', country: 'CN', lat: 31.1451, lon: 121.7048, volume: 0.9, type: 'mixed' },
   { code: 'PEK', name: 'Beijing', country: 'CN', lat: 40.0724, lon: 116.5972, volume: 0.8, type: 'mixed' },
   { code: 'SGN', name: 'Ho Chi Minh', country: 'VN', lat: 10.8195, lon: 106.6525, volume: 0.45, type: 'passenger' },
@@ -164,6 +166,8 @@ export const HUB_CITIES: readonly HubCity[] = [
   // -- Oceania --
   { code: 'SYD', name: 'Sydney', country: 'AU', lat: -33.9461, lon: 151.1719, volume: 0.55, type: 'passenger' },
   { code: 'MEL', name: 'Melbourne', country: 'AU', lat: -37.6702, lon: 144.5229, volume: 0.42, type: 'passenger' },
+  { code: 'PER', name: 'Perth', country: 'AU', lat: -31.9496, lon: 115.9437, volume: 0.35, type: 'passenger' }, // Western Australia
+  { code: 'DRW', name: 'Darwin', country: 'AU', lat: -12.4079, lon: 130.9811, volume: 0.2, type: 'mixed' }, // Northern Territory
 ];
 
 // Ensure uniqueness of codes -- useful for lookups and route generation
