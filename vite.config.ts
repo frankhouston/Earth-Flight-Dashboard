@@ -5,6 +5,7 @@ import { dirname, resolve } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  base: 'https://frankhouston.github.io/Earth-Flight-Dashboard/',
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
