@@ -109,6 +109,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'FIH', name: 'Kinshasa', country: 'CD', lat: -4.4167, lon: 15.4667, volume: 0.25, type: 'mixed' }, // DR Congo
   { code: 'LAD', name: 'Luanda', country: 'AO', lat: -8.2739, lon: 13.2333, volume: 0.3, type: 'mixed' }, // Angola
   { code: 'NKC', name: 'Nouakchott', country: 'MR', lat: 18.2925, lon: -15.9444, volume: 0.15, type: 'passenger' }, // Mauritania
+  { code: 'TOM', name: 'Timbuktu', country: 'ML', lat: 16.7667, lon: -3.0050, volume: 0.1, type: 'passenger' }, // Mali — historic trans-Saharan trade hub
   { code: 'ALG', name: 'Algiers', country: 'DZ', lat: 36.7188, lon: 3.2623, volume: 0.25, type: 'passenger' }, // Algeria
   { code: 'NDJ', name: 'Ndjamena', country: 'TD', lat: 12.2058, lon: 15.0396, volume: 0.2, type: 'passenger' }, // Chad
   { code: 'TIP', name: 'Tripoli', country: 'LY', lat: 32.6396, lon: 13.1616, volume: 0.2, type: 'passenger' }, // Libya
