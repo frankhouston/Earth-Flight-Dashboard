@@ -1,87 +1,79 @@
-# Three.js Sojournwith.us
+# Earth Flight Dashboard
 
-A cinematic Earth flight dashboard built with Three.js r185 and Vite 8.2.
+A cinematic Three.js globe visualization showing real-time flight routes between major global hubs. Serves as a mesmerizing screensaver / demo of WebGL-powered geospatial data visualization.
 
-## 🎬 Cinematic Tour
+![Earth Flight Dashboard](apng/earth-tour-south-hemisphere.png)
 
-![Animated Earth Dashboard](animated-earth.png)
+## Features
 
-A 10-second animated PNG (APNG) of the running dashboard showing the auto-demo
-cinematic camera tour. The camera orbits from a wide Earth overview through
-North America, the North Pole, Europe/Africa, the Asia-Pacific hub cluster,
-the Pacific crossing, the Americas, low orbit, and back.
+- **Real-time great-circle flight arcs** animated between 80+ global airports
+- **Cinematic tour mode** — automatically activates after user inactivity, smoothly orbiting the globe through key regions
+- **Day/night terminator** — real-time sun position drives the terminator shader
+- **Interactive controls** — drag to rotate, scroll to zoom, click airports for details
+- **Glassmorphism UI** — frosted panels showing live flight statistics
+- **Auto-reset** — simulation resets when total flights hit a configurable threshold (default: 100)
 
-## ✈️ Features
+## Quick Start
 
-| Feature | Stack |
-|---|---|
-| **Day/Night Terminator** | Custom ShaderMaterial with smoothstep blend |
-| **Topo Relief** | Elevation-displaced sphere geometry |
-| **Ocean Specular + Glitter** | Blinn-Phong highlights with noise-based glitter |
-| **Atmospheric Glow** | BackSide sphere, additive blending, fresnel rim |
-| **Flight Packets** | Great-circle arcs with pool-based animated sprites |
-| **Live Data Bridge** | Simulation + API mode (30fps tick, 40 hub cities) |
-| **Cinematic Camera** | 9-keyframe auto-demo tour (12s idle → activate) |
+Visit the live demo: https://frankhouston.github.io/Earth-Flight-Dashboard/
 
-## 🚀 Quick Start
+Or run locally:
 
 ```bash
+git clone https://github.com/frankhouston/Earth-Flight-Dashboard.git
+cd Earth-Flight-Dashboard
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000` in Chrome/Firefox with WebGL support.
+## Screenshots
 
-### Build for production
+### Southern Hemisphere Tour: Antarctica → Cape Hope → Cape Horn → New Zealand → Sydney → Chicago → London → Spin
+
+![Southern Hemisphere Tour](apng/earth-tour-south-hemisphere.png)
+
+### Northern Hemisphere: North America → Arctic → Europe → Asia-Pacific → Pacific Crossing → Americas
+
+![Northern Hemisphere Tour](apng/earth-tour-northern-hemisphere.png)
+
+## Cinematic Tour Waypoints
+
+The auto-demo follows this sequence (activates after 10s of inactivity):
+
+1. Wide Earth overview
+2. North America
+3. North pole
+4. Europe/Africa
+5. Asia-Pacific
+6. Pacific crossing
+7. Americas
+8. **Antarctica — Rothera Station (RYG)**
+9. **Cape of Good Hope**
+10. **Cape Horn + Falklands**
+11. **New Zealand**
+12. **Sydney, Australia**
+13. **Chicago (ORD)** — transition through North American hub
+14. **London (LHR)** — European perspective
+15. Low orbit
+16. Wide overview
+17. **Full 360° spinning globe**
+18. Loop back
+
+## Build
 
 ```bash
 npm run build
 ```
 
-### Regenerate the APNG
+Outputs static files to `dist/` — deploy with any static web server.
 
-```bash
-node capture-apng.js   # requires Puppeteer + headless Chrome
-ffmpeg -framerate 15 -i /tmp/canvas-frames/frame-%04d.png -plays 0 -pix_fmt rgb24 animated-earth.png
-```
+## Tech Stack
 
-## 📁 Project Structure
+- Three.js r185
+- TypeScript
+- Vite 8.2
+- GLSL shaders for day/night terminator
 
-```
-src/
-  main.ts                      — entry point, exposes debug globals
-  data/
-    DataProvider.ts            — simulation + API bridge (subscriber pattern)
-    cities.ts                  — 40 hub cities across 6 continents
-  engine/
-    Dashboard.ts               — orchestrator (data ↔ Three.js sync)
-    CameraDemo.ts              — cinematic camera controller
-    arcs/
-      ArcGenerator.ts          — great-circle + Catmull-Rom splines
-      PacketSystem.ts          — pool-based animated packet flow
-    globe/
-      TerminatorMaterial.ts    — Earth shader (terminator, relief, glitter)
-      Atmosphere.ts            — atmospheric scattering shell
-  textures/
-    TextureLoader.ts           — CDN texture loading w/ retry + caching
-```
-
-## ⌨️ Camera Controls
-
-| Action | Effect |
-|---|---|
-| **Mouse drag** | Orbit / pan |
-| **Scroll** | Zoom |
-| **No input (12s)** | Cinematic auto-demo activates |
-| **Any input** | Returns control from cinematic mode |
-
-## 🔧 TypeScript Verification
-
-```bash
-npx tsc --noEmit   # 0 errors
-npx vite build      # succeeds
-```
-
-## 📄 License
+## License
 
 MIT
