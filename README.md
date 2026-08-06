@@ -15,7 +15,7 @@ A cinematic Three.js globe visualization showing real-time flight routes between
 
 ## Quick Start
 
-Visit the live demo: https://frankhouston.github.io/Earth-Flight-Dashboard/
+Visit the live demo: https://frankhouston.github.io/Earth-Flight-Dashboard
 
 Or run locally:
 
