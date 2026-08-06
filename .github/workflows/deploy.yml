@@ -8,6 +8,10 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -15,6 +19,10 @@ jobs:
           node-version: '20'
       - run: npm install
       - run: npm run build
+      - name: Copy APNG assets to dist
+        run: |
+          mkdir -p dist/apng
+          cp -r apng/* dist/apng/
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
