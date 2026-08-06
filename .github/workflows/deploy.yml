@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: pages
-  url: https://frankhouston.github.io/Earth-Flight-Dashboard
+  cancel-in-progress: true
 
 jobs:
   build:
