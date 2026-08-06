@@ -91,6 +91,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'SVO', name: 'Moscow', country: 'RU', lat: 55.9712, lon: 36.9175, volume: 0.7, type: 'mixed' },
   { code: 'WAW', name: 'Warsaw', country: 'PL', lat: 52.1780, lon: 20.9810, volume: 0.5, type: 'passenger' },
   { code: 'KBP', name: 'Kiev', country: 'UA', lat: 50.2839, lon: 30.3273, volume: 0.45, type: 'passenger' },
+  { code: 'ATH', name: 'Athens', country: 'GR', lat: 37.4300, lon: 23.7500, volume: 0.25, type: 'passenger' }, // Greece
 
   // -- Ring of Fire --
   { code: 'PTY', name: 'Panama City', country: 'PA', lat: 8.9712, lon: -79.5595, volume: 0.5, type: 'passenger' },
@@ -137,6 +138,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'HND', name: 'Tokyo Haneda', country: 'JP', lat: 35.5494, lon: 139.7841, volume: 0.85, type: 'passenger' },
   { code: 'NRT', name: 'Tokyo Narita', country: 'JP', lat: 35.7647, lon: 140.3864, volume: 0.75, type: 'passenger' },
   { code: 'KIX', name: 'Osaka Kansai', country: 'JP', lat: 34.4257, lon: 135.2445, volume: 0.45, type: 'passenger' },
+  { code: 'CTS', name: 'Sapporo', country: 'JP', lat: 42.7925, lon: 141.6633, volume: 0.4, type: 'passenger' }, // New Chitose Airport (CTS), Hokkaido
   { code: 'PVG', name: 'Shanghai', country: 'CN', lat: 31.1451, lon: 121.7048, volume: 0.9, type: 'mixed' },
   { code: 'PEK', name: 'Beijing', country: 'CN', lat: 40.0724, lon: 116.5972, volume: 0.8, type: 'mixed' },
   { code: 'SGN', name: 'Ho Chi Minh', country: 'VN', lat: 10.8195, lon: 106.6525, volume: 0.45, type: 'passenger' },
