@@ -4,10 +4,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  # Run after the deploy workflow completes
-  workflow_run:
-    workflows: ["Deploy to GitHub Pages"]
-    types: [completed]
 
 permissions:
   contents: read
@@ -16,7 +12,6 @@ permissions:
 
 concurrency:
   group: pages
-  url: ${{ steps.deployment.outputs.page_url }}
 
 jobs:
   build:
@@ -40,7 +35,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
-  
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
