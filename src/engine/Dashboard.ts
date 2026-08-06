@@ -5,12 +5,15 @@ import { TerminatorMaterial, computeSunDirection } from '@/engine/globe/Terminat
 import { Atmosphere } from '@/engine/globe/Atmosphere';
 import { createGreatCircleArc, createArcLine, ArcGeometry } from '@/engine/arcs/ArcGenerator';
 import { PacketSystem } from '@/engine/arcs/PacketSystem';
+import { MarkerSystem } from '@/engine/arcs/MarkerSystem';
+import { AirportPopup } from '@/ui/AirportPopup';
 import { HUB_CITIES, HubCity } from '@/data/cities';
 import { DataProvider, FlightRoute, DashboardData } from '@/data/DataProvider';
 import { CameraDemo } from '@/engine/CameraDemo';
 import { StatCards } from '@/ui/StatCards';
 import { RouteTicker } from '@/ui/RouteTicker';
 import { HUDOverlay } from '@/ui/HUDOverlay';
+import { LatLonReadout } from '@/ui/LatLonReadout';
 
 /**
  * Core dashboard orchestrator.
@@ -21,6 +24,7 @@ import { HUDOverlay } from '@/ui/HUDOverlay';
  *     └── GlobeGroup (23.4 degree tilt + Y rotation)
  *         ├── Globe (SphereGeometry + TerminatorMaterial)
  *         ├── Atmosphere (glow shell)
+ *         ├── MarkerGroup (city dots + labels at lat/lon positions)
  *         └── ArcGroup
  *             ├── Arc lines (great-circle routes)
  *             └── Packet sprites (animated data packets)
@@ -28,6 +32,7 @@ import { HUDOverlay } from '@/ui/HUDOverlay';
  * Data flow:
  *   DataProvider (simulation or API) → DashboardData → Arc sync + UI stats
  *   CameraDemo → orbital cinematic tour after idle
+ *   Mouse hover → LatLonReadout (cursor-following lat/lon via raycast)
  */
 
 interface ArcEntry {
@@ -50,6 +55,7 @@ export class EarthDashboard {
   private terminatorMaterial!: TerminatorMaterial;
   private atmosphere!: Atmosphere;
   private arcGroup!: THREE.Group;
+  private markerSystem!: MarkerSystem;
   private packetSystem!: PacketSystem;
 
   // -- Data integration
@@ -60,6 +66,8 @@ export class EarthDashboard {
   private statCards!: StatCards;
   private routeTicker!: RouteTicker;
   private hudOverlay!: HUDOverlay;
+  private latLonReadout!: LatLonReadout;
+  private airportPopup!: AirportPopup;
 
   // -- Cinematic camera
   private cameraDemo!: CameraDemo;
@@ -70,6 +78,9 @@ export class EarthDashboard {
   // -- Animation control
   private timeScale: number = 60; // 60x = 1 real second ~= 1 minute simulated
   private isTimeDriven: boolean = true;
+
+  // -- Reset threshold
+  private resetThreshold: number = 100; // Total flights before auto-reset
 
   // -- Loading UI
   private loadingEl: HTMLElement | null = null;
@@ -91,6 +102,7 @@ export class EarthDashboard {
 
     this.createScene();
     this.createCamera();
+    this.markerSystem.setCamera(this.camera);
     this.createRenderer();
     this.textureLoader.setMaxAnisotropy(this.renderer.capabilities.getMaxAnisotropy());
     this.createControls();
@@ -104,22 +116,67 @@ export class EarthDashboard {
       this.statCards.dim();
       this.routeTicker.dim();
       this.hudOverlay.dim();
+      this.markerSystem.dim();
+      this.latLonReadout.hide();
     };
     this.cameraDemo.onDeactivate = () => {
       this.controls.enabled = true;
       this.statCards.undim();
       this.routeTicker.undim();
       this.hudOverlay.undim();
+      this.markerSystem.undim();
     };
 
     // Stat cards — glassmorphism overlay for real-time flight stats
     this.statCards = new StatCards(this.mountPoint!);
+    this.statCards.setOnCardClick((cardId) => {
+      if (cardId === 'total') {
+        const input = window.prompt(
+          'Enter total flight count before reset:',
+          String(this.resetThreshold),
+        );
+        if (input !== null) {
+          const value = parseInt(input, 10);
+          if (!isNaN(value) && value > 0) {
+            this.resetThreshold = value;
+            this.statCards.setResetThreshold(value);
+          }
+        }
+      }
+    });
 
     // Route ticker — scrolling marquee of active flight routes
     this.routeTicker = new RouteTicker(this.mountPoint!);
 
     // HUD overlay — data source, time, active count, legend
     this.hudOverlay = new HUDOverlay(this.mountPoint!);
+
+    // Lat/Lon readout — cursor-following coordinate display
+    this.latLonReadout = new LatLonReadout(this.mountPoint!);
+    this.latLonReadout.setCamera(this.camera);
+    this.latLonReadout.setDomElement(this.renderer.domElement);
+
+    // Airport popup — shows airport info, hide/unhide options on marker click
+    this.airportPopup = new AirportPopup(this.mountPoint!);
+    this.markerSystem.setOnMarkerClick((city) => {
+      this.airportPopup.show(city, this.camera);
+
+      // Listen for hide event (close button)
+      this.airportPopup.getContainer().addEventListener('hide-marker', ((e: CustomEvent) => {
+        this.markerSystem.hideMarker(e.detail.code);
+      }) as EventListener);
+
+      // Listen for toggle event (eye button)
+      this.airportPopup.getContainer().addEventListener('toggle-marker', ((e: CustomEvent) => {
+        this.markerSystem.toggleMarker(e.detail.code, e.detail.show);
+      }) as EventListener);
+
+      // Listen for reset globe event (trash button)
+      this.airportPopup.getContainer().addEventListener('reset-globe', (() => {
+        this.resetGlobe();
+      }) as EventListener);
+    });
+    this.markerSystem.setDomElement(this.renderer.domElement);
 
     // Kick off texture loading (async -- globe created on completion)
     this.loadTextures();
@@ -134,6 +191,10 @@ export class EarthDashboard {
     // Tilted parent group for 23.4 degree axial tilt
     this.globeGroup = new THREE.Group();
     this.scene.add(this.globeGroup);
+
+    // Marker group is a child of globe group so city markers rotate with the globe
+    this.markerSystem = new MarkerSystem(1.0);
+    this.globeGroup.add(this.markerSystem.getGroup());
 
     // Arc group is a child of globe group so arcs rotate with the globe
     this.arcGroup = new THREE.Group();
@@ -219,6 +280,7 @@ export class EarthDashboard {
     this.statCards.show();
     this.routeTicker.show();
     this.hudOverlay.show();
+    this.airportPopup.hide();
   }
 
   // -- Texture Loading
@@ -233,6 +295,8 @@ export class EarthDashboard {
       );
       this.createGlobe(textures);
       this.createAtmosphere();
+      this.createCityMarkers();
+      this.latLonReadout.setGlobe(this.globe, this.globeGroup);
       this.initDataFeed();
       this.hideLoadingUI();
     } catch (error) {
@@ -241,6 +305,8 @@ export class EarthDashboard {
       const fallbackNight = this.textureLoader.createFallbackTexture(0x081a2c);
       this.createGlobe({ day: fallbackDay, night: fallbackNight, elevation: fallbackNight });
       this.createAtmosphere();
+      this.createCityMarkers();
+      this.latLonReadout.setGlobe(this.globe, this.globeGroup);
       this.initDataFeed();
       this.hideLoadingUI();
     }
@@ -264,12 +330,12 @@ export class EarthDashboard {
     });
 
     this.globe = new THREE.Mesh(geometry, this.terminatorMaterial);
-
-    // Apply 23.4 degree axial tilt
-    const AXIAL_TILT = THREE.MathUtils.degToRad(23.44);
-    this.globe.rotation.x = AXIAL_TILT;
-
     this.globeGroup.add(this.globe);
+
+    // Apply 23.4 degree axial tilt to the entire GlobeGroup so the tilt
+    // affects the globe texture, markers, arcs, and atmosphere equally.
+    const AXIAL_TILT = THREE.MathUtils.degToRad(23.44);
+    this.globeGroup.rotation.x = AXIAL_TILT;
   }
 
   // -- Atmosphere
@@ -283,6 +349,48 @@ export class EarthDashboard {
       sunDirection: new THREE.Vector3(0.5, 0.2, 0.8),
     });
     this.globeGroup.add(this.atmosphere);
+  }
+
+  // -- City Markers
+
+  /**
+   * Creates visual markers at each hub city's geographic position on the globe.
+   * Uses latLonToSpherical to convert lat/lon/WGS84 coordinates to 3D positions,
+   * the same function used for arc endpoints in ArcGenerator.
+   */
+  private createCityMarkers(): void {
+    this.markerSystem.createAllMarkers(HUB_CITIES);
+    // Highlight major international hubs across all continents:
+    // Only top-tier international gateway airports with significant
+    // passenger volumes and global route networks.
+    this.markerSystem.highlightCities([
+      // Middle East
+      'DXB',  // Dubai — world's busiest international airport
+      // Asia
+      'PVG',  // Shanghai Pudong — Asia's largest international hub
+      'PEK',  // Beijing Capital — major international gateway
+      'ICN',  // Seoul Incheon — major Northeast Asia hub
+      'SIN',  // Singapore Changi — Southeast Asia hub
+      'HND',  // Tokyo Haneda — Japan's main international airport
+      'DEL',  // Delhi — South Asia international hub
+      // Asia-Pacific / Oceania
+      'HND',  // Tokyo Haneda (duplicate for Asia-Pacific grouping clarity)
+      'SYD',  // Sydney — Australia's main international gateway
+      // North America (US)
+      'ORD',  // Chicago O'Hare — major US international hub
+      'LAX',  // Los Angeles — West Coast international gateway
+      'JFK',  // New York JFK — primary US international airport
+      // Europe
+      'LHR',  // London Heathrow — Europe's busiest international hub
+      'CDG',  // Paris Charles de Gaulle — major European hub
+      'FRA',  // Frankfurt — major European cargo + passenger hub
+      // Africa
+      'JNB',  // Johannesburg — major Africa international hub
+      'CPT',  // Cape Town — secondary South Africa international gateway
+      // South America
+      'GRU',  // São Paulo — Latin America's largest international hub
+      'EZE',  // Buenos Aires — major South American international airport
+    ]);
   }
 
   // -- Data Feed
@@ -310,6 +418,13 @@ export class EarthDashboard {
 
     // Subscribe to route updates — sync the 3D scene + all UI overlays
     this.dataProvider.subscribe((data, source) => {
+      // Auto-reset when total flights hits the configurable threshold
+      if (data.stats.totalFlights >= this.resetThreshold) {
+        this.resetGlobe();
+        this.dataProvider.reset();
+        return; // Skip stale sync — resetGlobe + reset() already emitted an empty snapshot
+      }
+
       this.dashboardData = data;
       this.syncRoutes(data.routes);
       this.statCards.update(data);
@@ -383,9 +498,24 @@ export class EarthDashboard {
     const dom = this.renderer.domElement;
     const onInput = () => this.cameraDemo.onUserInteraction();
 
+    // Note: enablePan=false (set in createControls) already prevents right-click
+    // from triggering camera pan, so right-drag is free for marker calibration.
+
+    // Left click: stop cinematic mode (or reset idle timer)
     dom.addEventListener('mousedown', onInput);
+    // Double click: restart cinematic tour
+    dom.addEventListener('dblclick', () => {
+      this.cameraDemo.startCinematic();
+    });
+
     dom.addEventListener('touchstart', onInput);
     dom.addEventListener('wheel', onInput);
+
+    // Escape key: reset globe when flight paths become saturated
+    dom.setAttribute('tabindex', '0');
+    dom.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') this.resetGlobe();
+    });
 
     window.addEventListener('keydown', (e) => {
       // Any key press resets idle timer (or exits cinematic)
@@ -400,7 +530,7 @@ export class EarthDashboard {
   /**
    * Updates the sun direction, globe rotation, and all animated systems.
    */
-  private updateTime(): void {
+  private updateTime(delta: number): void {
     if (!this.terminatorMaterial) return;
 
     // Compute simulated time for sun position
@@ -420,7 +550,7 @@ export class EarthDashboard {
     // Rotate the globe on its tilted axis for daily rotation
     if (this.isTimeDriven) {
       const rotationRate = (2 * Math.PI) / (24 * 60 * 60 / this.timeScale);
-      this.globeGroup.rotation.y += rotationRate * this.clock.getDelta();
+      this.globeGroup.rotation.y += rotationRate * delta;
     }
   }
 
@@ -436,6 +566,9 @@ export class EarthDashboard {
       this.animationId = null;
     }
     this.dataProvider?.stop();
+    this.markerSystem?.dispose();
+    this.latLonReadout?.dispose();
+    this.airportPopup?.dispose();
     this.statCards?.dispose();
     this.routeTicker?.dispose();
     this.hudOverlay?.dispose();
@@ -445,13 +578,16 @@ export class EarthDashboard {
     const delta = this.clock.getDelta();
 
     // Update time-driven rotation and sun direction
-    this.updateTime();
+    this.updateTime(delta);
 
     // Update animated packets
     this.packetSystem.update(delta);
 
     // Update cinematic camera demo
     this.cameraDemo.update(delta);
+
+    // Billboard city label sprites to face the camera
+    this.markerSystem.update();
 
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
@@ -482,6 +618,8 @@ export class EarthDashboard {
   getGlobe(): THREE.Mesh { return this.globe; }
   /** Gets the arc group for adding/modifying flight paths. */
   getArcGroup(): THREE.Group { return this.arcGroup; }
+  /** Gets the marker system for city dots and labels. */
+  getMarkerSystem(): MarkerSystem { return this.markerSystem; }
   /** Gets the renderer for shader uniforms and capabilities. */
   getRenderer(): THREE.WebGLRenderer { return this.renderer; }
   /** Gets the packet system for managing animated flow. */
@@ -494,4 +632,19 @@ export class EarthDashboard {
   getLatestData(): DashboardData | null { return this.dashboardData; }
   /** Sets the time scale for simulation (1=realtime, 60=1min=1day, etc). */
   setTimeScale(scale: number): void { this.timeScale = scale; }
+  /** Resets the globe visualization by clearing all arcs and packets. */
+  resetGlobe(): void {
+    // Remove all arc entries
+    const entriesCopy = new Map(this.arcEntries);
+    for (const [id, entry] of entriesCopy) {
+      this.removeArcEntry(id, entry);
+    }
+    this.arcEntries.clear();
+
+    // Clear all packets
+    this.packetSystem.clear();
+
+    // Reset dashboard data reference
+    this.dashboardData = null;
+  }
 }

@@ -138,6 +138,20 @@ export class PacketSystem {
   }
 
   /**
+   * Clears all active arcs and deactivates all packets without
+   * disposing materials. Useful for resetting the visualization
+   * when the globe becomes saturated.
+   */
+  clear(): void {
+    this.activeArcs = [];
+    for (const packet of this.packets) {
+      packet.active = false;
+      packet.arc = null;
+      this.parent.remove(packet.sprite);
+    }
+  }
+
+  /**
    * Spawns the initial set of packets for an arc.
    */
   private spawnPacketsForArc(arc: ArcGeometry): void {

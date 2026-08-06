@@ -129,6 +129,16 @@ export class DataProvider {
   }
 
   /**
+   * Resets the simulation: clears all active routes and resets the total spawned counter.
+   * The simulation continues running if it was already started.
+   */
+  reset(): void {
+    this.routes.clear();
+    this.totalSpawned = 0;
+    this.emit();
+  }
+
+  /**
    * Stops the data update loop.
    */
   stop(): void {

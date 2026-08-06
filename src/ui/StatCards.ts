@@ -27,6 +27,8 @@ interface StatCardDefinition {
   color: string;
   format: (data: DashboardData) => string;
   subtitle: (data: DashboardData) => string;
+  /** When true, the card shows a hover/hint cursor and fires onCardClick */
+  clickable?: boolean;
 }
 
 /** Four-card configuration: icon, label, value formatter, subtitle */
@@ -36,6 +38,7 @@ const CARD_DEFS: StatCardDefinition[] = [
     icon: '🛫',
     label: 'Total Flights',
     color: GROWTH_COLOR,
+    clickable: true,
     format: (d) => d.stats.totalFlights.toLocaleString(),
     subtitle: (d) => `${d.stats.totalFlights} routes spawned`,
   },
@@ -65,11 +68,16 @@ const CARD_DEFS: StatCardDefinition[] = [
   },
 ];
 
+/** Callback fired when a clickable stat card is clicked */
+export type CardClickCallback = (cardId: string, card: HTMLElement) => void;
+
 export class StatCards {
   private container: HTMLElement;
   private cards: Map<string, HTMLElement> = new Map();
   private styleEl: HTMLStyleElement;
   private isVisible: boolean = true;
+  private onClickCallback: CardClickCallback | null = null;
+  private resetThreshold: number = 100;
 
   constructor(parent: HTMLElement) {
     this.container = this.createContainer();
@@ -121,6 +129,11 @@ export class StatCards {
           0 8px 32px rgba(0, 0, 0, 0.4),
           inset 0 1px 0 rgba(255, 255, 255, 0.18);
         pointer-events: auto;
+        transition: all 0.2s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-2px);
       }
 
       .stat-card__icon {
@@ -227,7 +240,42 @@ export class StatCards {
     sub.textContent = 'Waiting for data…';
     card.appendChild(sub);
 
+    // Wire up click handling for clickable cards
+    if (def.clickable && this.onClickCallback) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        this.onClickCallback?.(def.id, card);
+      });
+    }
+
     return card;
+  }
+
+  /** Registers a callback for click events on clickable stat cards. */
+  setOnCardClick(cb: CardClickCallback): void {
+    this.onClickCallback = cb;
+    // Attach click listeners to already-created clickable cards
+    for (const def of CARD_DEFS) {
+      if (def.clickable) {
+        const card = this.cards.get(def.id);
+        if (card) {
+          card.style.cursor = 'pointer';
+          card.addEventListener('click', () => {
+            this.onClickCallback?.(def.id, card);
+          });
+        }
+      }
+    }
+  }
+
+  /** Updates the reset threshold for the Total Flights card. */
+  setResetThreshold(value: number): void {
+    this.resetThreshold = value;
+  }
+
+  /** Gets the reset threshold for the Total Flights card. */
+  getResetThreshold(): number {
+    return this.resetThreshold;
   }
 
   /**
@@ -248,9 +296,19 @@ export class StatCards {
         setTimeout(() => { valueEl.style.transform = 'scale(1)'; }, 200);
       }
       if (subEl) {
-        subEl.textContent = def.subtitle(data);
+        // For the total card, show the reset threshold instead of default subtitle
+        if (def.id === 'total') {
+          subEl.textContent = `Resets at ${this.resetThreshold} flights`;
+        } else {
+          subEl.textContent = def.subtitle(data);
+        }
       }
     }
+  }
+
+  /** Gets the card element for a given card ID. */
+  getCard(id: string): HTMLElement | undefined {
+    return this.cards.get(id);
   }
 
   /** Shows the stat cards with a fade-in. */

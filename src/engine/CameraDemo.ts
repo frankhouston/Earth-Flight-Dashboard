@@ -31,6 +31,8 @@ export interface CameraKeyframe {
   fov?: number;
   /** Easing function for this transition */
   ease?: (t: number) => number;
+  /** If true, camera orbits 360° around the globe during this keyframe */
+  spin?: boolean;
 }
 
 /** Default idle time before cinematic mode starts (seconds) */
@@ -133,16 +135,80 @@ export class CameraDemo {
         duration: 7,
         fov: 48,
       },
-      // 8. Low orbit — close to surface
+      // 8. Antarctica — Rothera Station (RYG) on Adelaide Island, focused on the far south
+      {
+        position: new THREE.Vector3(-DIST * 0.2, -DIST * 0.8, -DIST * 0.3),
+        target: new THREE.Vector3(-0.1, -0.3, -0.1),
+        duration: 10,
+        fov: 30,
+      },
+      // 9. Cape of Good Hope (southern tip of Africa)
+      {
+        position: new THREE.Vector3(DIST * 0.2, DIST * 0.4, DIST * 0.8),
+        target: new THREE.Vector3(0.1, 0.2, 0.3),
+        duration: 8,
+        fov: 38,
+      },
+      // 10. Cape Horn (southern tip of South America) — Falkland Islands nearby (FIE)
+      {
+        position: new THREE.Vector3(-DIST * 0.4, DIST * 0.5, -DIST * 0.6),
+        target: new THREE.Vector3(-0.2, 0.3, -0.3),
+        duration: 8,
+        fov: 45,
+      },
+      // 11. New Zealand (WLG) and Southern Ocean
+      {
+        position: new THREE.Vector3(DIST * 0.8, DIST * 0.2, -DIST * 0.5),
+        target: new THREE.Vector3(0.3, 0.1, -0.3),
+        duration: 8,
+        fov: 45,
+      },
+      // 12. Sydney, Australia (SYD)
+      {
+        position: new THREE.Vector3(DIST * 0.6, -DIST * 0.2, -DIST * 0.6),
+        target: new THREE.Vector3(0.25, -0.1, -0.3),
+        duration: 8,
+        fov: 42,
+      },
+      // 13. Chicago (ORD) — transition through North American hub
+      {
+        position: new THREE.Vector3(-DIST * 0.6, DIST * 0.4, DIST * 0.4),
+        target: new THREE.Vector3(-0.2, 0.2, 0.1),
+        duration: 10,
+        fov: 45,
+      },
+      // 14. London (LHR) — European perspective
+      {
+        position: new THREE.Vector3(-DIST * 0.8, DIST * 0.3, DIST * 0.5),
+        target: new THREE.Vector3(-0.25, 0.1, 0.25),
+        duration: 9,
+        fov: 40,
+      },
+      // 15. Low orbit — close to surface, building tension for the spin
       {
         position: new THREE.Vector3(0.3, DIST * 0.3, DIST),
         target: new THREE.Vector3(0.1, 0.3, -0.1),
         duration: 7,
         fov: 60,
       },
-      // 9. Back to the start — wide overview
+      // 16. Back to the start — wide overview
       {
         position: new THREE.Vector3(-DIST, DIST * 0.6, DIST * 0.4),
+        target: new THREE.Vector3(0, 0, 0),
+        duration: 10,
+        fov: 40,
+      },
+      // 17. Full 360° spinning globe — camera orbits around the globe
+      {
+        position: new THREE.Vector3(DIST * 0.5, DIST * 0.2, DIST * 0.7),
+        target: new THREE.Vector3(0, 0, 0),
+        duration: 15,
+        fov: 35,
+        spin: true,
+      },
+      // 18. Back to overview — complete the loop
+      {
+        position: new THREE.Vector3(0, DIST, DIST),
         target: new THREE.Vector3(0, 0, 0),
         duration: 10,
         fov: 40,
@@ -176,8 +242,13 @@ export class CameraDemo {
       t = 1.0;
     }
 
-    const eased = wp.ease ? wp.ease(t) : defaultEase(t);
-    this.applyInterpolation(wp, eased);
+    if (wp.spin) {
+      // Spin mode: camera orbits 360° around the globe
+      this.applySpin(wp, t);
+    } else {
+      const eased = wp.ease ? wp.ease(t) : defaultEase(t);
+      this.applyInterpolation(wp, eased);
+    }
 
     if (finished) {
       this.advanceWaypoint();
@@ -209,6 +280,30 @@ export class CameraDemo {
     // FOV
     if (wp.fov !== undefined) {
       this.camera.fov = THREE.MathUtils.lerp(this.wpStartFov, wp.fov, eased);
+      this.camera.updateProjectionMatrix();
+    }
+  }
+
+  /** Spins the camera 360° around the globe target. */
+  private applySpin(wp: CameraKeyframe, t: number): void {
+    const radius = this.wpStartPos.length();
+    const angle = t * Math.PI * 2; // Full 360° rotation
+
+    // Orbital position around origin
+    this.camera.position.set(
+      Math.cos(angle) * radius,
+      Math.sin(angle) * radius * 0.3, // Slight vertical oscillation for visual interest
+      Math.sin(angle) * radius,
+    );
+
+    // Always look at the globe center
+    this.currentTarget.copy(wp.target);
+    this.camera.lookAt(wp.target);
+    this.camera.updateMatrixWorld();
+
+    // FOV interpolation
+    if (wp.fov !== undefined) {
+      this.camera.fov = THREE.MathUtils.lerp(this.wpStartFov, wp.fov, t);
       this.camera.updateProjectionMatrix();
     }
   }

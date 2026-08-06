@@ -41,13 +41,14 @@ const DEFAULT_OPTIONS: ArcOptions = {
 };
 
 /**
- * Converts geographic latitude/longitude to a 3D Cartesian position
- * on a sphere of the given radius.
+ * Converts geographic latitude/longitude to a 3D Cartesian position on a
+ * sphere of the given radius.
  *
- * Uses standard lat/lon to Cartesian conversion:
- *   x = R * cos(lat) * cos(lon)
- *   y = R * cos(lat) * sin(lon)
- *   z = R * sin(lat)
+ * Matches the default Three.js SphereGeometry UV mapping convention:
+ *   lon=0° (prime meridian) → +X  (texture center, u=0.5)
+ *   lon=90°E → -Z
+ *   lon=180° → -X  (texture edge, u=0)
+ *   lat=+90° (north pole) → +Y
  *
  * @param lat - Latitude in degrees (-90 to 90)
  * @param lon - Longitude in degrees (-180 to 180)
@@ -58,25 +59,28 @@ export function latLonToCartesian(
   lon: number,
   radius: number,
 ): THREE.Vector3 {
-  const phi = THREE.MathUtils.degToRad(90 - lat); // Colatitude (from +Y axis)
-  const theta = THREE.MathUtils.degToRad(lon); // Longitude
+  const latRad = THREE.MathUtils.degToRad(lat);
+  const lonRad = THREE.MathUtils.degToRad(lon);
 
-  const x = radius * Math.sin(phi) * Math.sin(theta);
-  const y = radius * Math.cos(phi);
-  const z = radius * Math.sin(phi) * Math.cos(theta);
+  // Derive from SphereGeometry: x=-R·cos(φ), z=R·sin(φ), φ=u·2π, u=(lon+180)/360
+  const x = radius * Math.cos(latRad) * Math.cos(lonRad);
+  const y = radius * Math.sin(latRad);
+  const z = -radius * Math.cos(latRad) * Math.sin(lonRad);
 
   return new THREE.Vector3(x, y, z);
 }
 
 /**
- * Converts geographic lat/lon to a 3D Cartesian position using
- * an alternative convention where +Z points to lat=0, lon=0 (sub-solar point
- * aligned with +Z for the Earth texture mapping).
+ * Converts geographic lat/lon to a 3D Cartesian position that matches the
+ * default Three.js SphereGeometry UV mapping convention.
  *
- * This matches the typical Three.js globe orientation where:
- *   - North pole is at +Y
- *   - Prime meridian (0deg lon) faces +Z
- *   - The "front" of a standard world map
+ * The standard equirectangular texture maps lon=0° to the center (u=0.5),
+ * which corresponds to +X in the SphereGeometry vertex layout. This function
+ * produces positions consistent with that mapping:
+ *   - North pole (+90° lat) → +Y
+ *   - Equator, lon=0°      → +X  (prime meridian at texture center)
+ *   - Equator, lon=90°E   → -Z
+ *   - Equator, lon=180°   → -X  (texture edge, u=0)
  *
  * @param lat - Latitude in degrees (-90 to 90)
  * @param lon - Longitude in degrees (-180 to 180)
@@ -90,9 +94,10 @@ export function latLonToSpherical(
   const latRad = THREE.MathUtils.degToRad(lat);
   const lonRad = THREE.MathUtils.degToRad(lon);
 
-  const x = radius * Math.cos(latRad) * Math.sin(lonRad);
+  // Derive from SphereGeometry: x=-R·cos(φ), z=R·sin(φ), φ=u·2π, u=(lon+180)/360
+  const x = radius * Math.cos(latRad) * Math.cos(lonRad);
   const y = radius * Math.sin(latRad);
-  const z = radius * Math.cos(latRad) * Math.cos(lonRad);
+  const z = -radius * Math.cos(latRad) * Math.sin(lonRad);
 
   return new THREE.Vector3(x, y, z);
 }

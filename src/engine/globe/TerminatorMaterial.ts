@@ -322,9 +322,11 @@ export function computeSunDirection(
   const hourAngle = THREE.MathUtils.degToRad((hours - 12) * 15);
 
   // Convert to 3D direction vector pointing toward the sun
-  const x = Math.cos(declination) * Math.sin(hourAngle);
+  // Longitude 0 (Greenwich) maps to +X in the globe's coordinate system,
+  // so at local noon (hourAngle=0) the sun should be at (cos(dec), sin(dec), 0).
+  const x = Math.cos(declination) * Math.cos(hourAngle);
   const y = Math.sin(declination);
-  const z = Math.cos(declination) * Math.cos(hourAngle);
+  const z = Math.cos(declination) * Math.sin(hourAngle);
 
   return new THREE.Vector3(x, y, z).normalize();
 }
