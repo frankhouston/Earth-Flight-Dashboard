@@ -77,7 +77,7 @@ export class StatCards {
   private styleEl: HTMLStyleElement;
   private isVisible: boolean = true;
   private onClickCallback: CardClickCallback | null = null;
-  private resetThreshold: number = 100;
+  private resetThreshold: number = 200;
 
   constructor(parent: HTMLElement) {
     this.container = this.createContainer();
