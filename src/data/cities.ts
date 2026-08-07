@@ -118,6 +118,9 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'KRT', name: 'Khartoum', country: 'SD', lat: 15.5897, lon: 32.5241, volume: 0.3, type: 'passenger' }, // Sudan
   { code: 'KBL', name: 'Mogadishu', country: 'SO', lat: 2.0133, lon: 45.3752, volume: 0.15, type: 'passenger' }, // Somalia
   { code: 'JIB', name: 'Djibouti', country: 'DJ', lat: 11.5369, lon: 42.9316, volume: 0.2, type: 'passenger' }, // Djibouti
+
+  // -- Canary Islands (Spain, off NW Africa) --
+  { code: 'TFS', name: 'Tenerife South', country: 'ES', lat: 28.0445, lon: -15.5924, volume: 0.45, type: 'passenger' }, // Reina Sofía Airport — busiest Canary Island airport
   { code: 'DXB', name: 'Dubai', country: 'AE', lat: 25.2532, lon: 55.3657, volume: 0.88, type: 'mixed' },
   { code: 'RUH', name: 'Riyadh', country: 'SA', lat: 24.7136, lon: 46.7259, volume: 0.65, type: 'passenger' },
   { code: 'BGW', name: 'Baghdad', country: 'IQ', lat: 33.2646, lon: 44.2611, volume: 0.4, type: 'passenger' },
