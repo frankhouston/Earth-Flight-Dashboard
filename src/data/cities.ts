@@ -24,7 +24,7 @@ export interface HubCity {
 }
 
 /**
- * 41 major global aviation and logistics hubs across all continents.
+ * 43 major global aviation and logistics hubs across all continents.
  * Sorted by continent for readability.
  */
 export const HUB_CITIES: readonly HubCity[] = [
@@ -41,6 +41,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'MEX', name: 'Mexico City', country: 'MX', lat: 19.4363, lon: -99.0721, volume: 0.65, type: 'passenger' },
   { code: 'YYZ', name: 'Toronto', country: 'CA', lat: 43.6777, lon: -79.6293, volume: 0.55, type: 'passenger' },
   { code: 'SEA', name: 'Seattle', country: 'US', lat: 47.4502, lon: -122.3088, volume: 0.75, type: 'passenger' },
+  { code: 'MSP', name: 'Minneapolis', country: 'US', lat: 44.8816, lon: -93.3580, volume: 0.65, type: 'mixed' }, // Delta Air Lines hub, Twin Cities metro
   { code: 'ANC', name: 'Anchorage', country: 'US', lat: 61.1744, lon: -149.9728, volume: 0.15, type: 'cargo' },
   { code: 'SCC', name: 'Deadhorse', country: 'US', lat: 70.4934, lon: -148.4648, volume: 0.12, type: 'cargo' }, // Prudhoe Bay oil field
   { code: 'OME', name: 'Nome', country: 'US', lat: 64.5039, lon: -165.4433, volume: 0.08, type: 'passenger' },
@@ -54,6 +55,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'MIA', name: 'Miami', country: 'US', lat: 25.7933, lon: -80.2906, volume: 0.85, type: 'passenger' },
   { code: 'ILM', name: 'Wilmington', country: 'US', lat: 34.4134, lon: -77.9115, volume: 0.25, type: 'passenger' }, // Cape Fear region, North Carolina
   { code: 'IAD', name: 'Washington Dulles', country: 'US', lat: 38.9531, lon: -77.4565, volume: 0.86, type: 'mixed' }, // Washington DC metro area, United Airlines hub
+  { code: 'MSY', name: 'New Orleans', country: 'US', lat: 29.9844, lon: -90.2589, volume: 0.55, type: 'passenger' }, // Gulf Coast hub, Louis Armstrong International Airport
   { code: 'CUN', name: 'Cancun', country: 'MX', lat: 21.0470, lon: -86.8640, volume: 0.55, type: 'passenger' },
 
   // -- South America --
