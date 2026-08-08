@@ -24,7 +24,7 @@ export interface HubCity {
 }
 
 /**
- * 51 major global aviation and logistics hubs across all continents.
+ * 52 major global aviation and logistics hubs across all continents.
  * Sorted by continent for readability.
  */
 export const HUB_CITIES: readonly HubCity[] = [
@@ -56,6 +56,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'ILM', name: 'Wilmington', country: 'US', lat: 34.4134, lon: -77.9115, volume: 0.25, type: 'passenger' }, // Cape Fear region, North Carolina
   { code: 'IAD', name: 'Washington Dulles', country: 'US', lat: 38.9531, lon: -77.4565, volume: 0.86, type: 'mixed' }, // Washington DC metro area, United Airlines hub
   { code: 'MSY', name: 'New Orleans', country: 'US', lat: 29.9844, lon: -90.2589, volume: 0.55, type: 'passenger' }, // Gulf Coast hub, Louis Armstrong International Airport
+  { code: 'HOU', name: 'Houston Hobby', country: 'US', lat: 29.7177, lon: -95.3412, volume: 0.4, type: 'passenger' }, // Houston Hobby Airport — Gulf Coast, near New Orleans (MSY)
   { code: 'STL', name: 'St. Louis', country: 'US', lat: 38.7494, lon: -90.5089, volume: 0.55, type: 'mixed' }, // Mississippi River corridor — links with New Orleans (MSY) and Minneapolis (MSP) along the great Mississippi
   { code: 'CUN', name: 'Cancun', country: 'MX', lat: 21.0470, lon: -86.8640, volume: 0.55, type: 'passenger' },
 
