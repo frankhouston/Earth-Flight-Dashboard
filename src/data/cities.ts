@@ -24,7 +24,7 @@ export interface HubCity {
 }
 
 /**
- * 40 major global aviation and logistics hubs across all continents.
+ * 41 major global aviation and logistics hubs across all continents.
  * Sorted by continent for readability.
  */
 export const HUB_CITIES: readonly HubCity[] = [
@@ -53,6 +53,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'KEF', name: 'Reykjavik', country: 'IS', lat: 64.1355, lon: -21.7979, volume: 0.55, type: 'passenger' }, // Iceland (Keflavik)
   { code: 'MIA', name: 'Miami', country: 'US', lat: 25.7933, lon: -80.2906, volume: 0.85, type: 'passenger' },
   { code: 'ILM', name: 'Wilmington', country: 'US', lat: 34.4134, lon: -77.9115, volume: 0.25, type: 'passenger' }, // Cape Fear region, North Carolina
+  { code: 'IAD', name: 'Washington Dulles', country: 'US', lat: 38.9531, lon: -77.4565, volume: 0.86, type: 'mixed' }, // Washington DC metro area, United Airlines hub
   { code: 'CUN', name: 'Cancun', country: 'MX', lat: 21.0470, lon: -86.8640, volume: 0.55, type: 'passenger' },
 
   // -- South America --
