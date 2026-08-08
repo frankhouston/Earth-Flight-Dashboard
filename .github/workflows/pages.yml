@@ -25,11 +25,12 @@ jobs:
       
       - run: npm install
       - run: npm run build
-      
-      - name: Copy APNG assets to dist
+
+      - name: Copy static assets to dist
         run: |
           mkdir -p dist/apng
           cp -r apng/* dist/apng/
+          cp .nojekyll dist/
       
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

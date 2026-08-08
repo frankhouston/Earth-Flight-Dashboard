@@ -157,10 +157,10 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'PEK', name: 'Beijing', country: 'CN', lat: 40.0724, lon: 116.5972, volume: 0.8, type: 'mixed' },
   // ──────────────────────────────────────────────────────────────────────────────
   // ★ SIGNIFICANT HISTORICAL & GEOGRAPHIC NOTE ── SILK ROAD REPRESENTATION ★
-  // The big gaps are the Chinese eastern starting point (no Xi'an/Urumqi/Kashgar)
+  // The big gaps were the Chinese eastern starting point (no Xi'an/Urumqi/Kashgar)
   // and the Southern Caucasus/Central Asian interior route. Adding XIY (Xi'an),
   // URC (Urumqi), KHG (Kashgar), ALA (Almaty), SZD (Samarkand), and VCE (Venice)
-  // would complete a proper Silk Road representation across the dashboard.
+  // has completed a proper Silk Road representation across the dashboard.
   // The route traces: XIY → URC → KHG → ALA → TAS → FRU → ASB → IKA → BGW → IST → VCE
   // ──────────────────────────────────────────────────────────────────────────────
   { code: 'XIY', name: 'Xi\'an', country: 'CN', lat: 34.4191, lon: 108.7192, volume: 0.55, type: 'passenger' }, // Ancient Chang'an — traditional eastern terminus of the Silk Road
@@ -180,10 +180,10 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'GYD', name: 'Baku', country: 'AZ', lat: 40.3777, lon: 49.8060, volume: 0.35, type: 'mixed' },
   { code: 'NQZ', name: 'Nur-Sultan', country: 'KZ', lat: 51.1657, lon: 71.4312, volume: 0.25, type: 'mixed' },
   { code: 'ALA', name: 'Almaty', country: 'KZ', lat: 43.3215, lon: 77.0506, volume: 0.35, type: 'mixed' }, // Kazakhstan — Silk Road route through the Tien Shan mountains
-  { code: 'FRU', name: 'Bishkek', country: 'KG', lat: 42.8333, lon: 74.5756, volume: 0.2, type: 'mixed' },
+  { code: 'FRU', name: 'Bishkek', country: 'KG', lat: 42.8333, lon: 74.5756, volume: 0.2, type: 'mixed' }, // Visually offset north in MarkerSystem to avoid clutter with TAS and NQZ
   { code: 'RND', name: 'Dushanbe', country: 'TJ', lat: 38.5367, lon: 68.7893, volume: 0.15, type: 'passenger' },
   { code: 'ASB', name: 'Ashgabat', country: 'TM', lat: 37.6603, lon: 58.3937, volume: 0.15, type: 'passenger' },
-  { code: 'TAS', name: 'Tashkent', country: 'UZ', lat: 41.2574, lon: 69.2907, volume: 0.3, type: 'mixed' },
+  { code: 'TAS', name: 'Tashkent', country: 'UZ', lat: 41.2574, lon: 69.2907, volume: 0.3, type: 'mixed' }, // Visually offset north in MarkerSystem to avoid clutter with FRU and NQZ
   { code: 'SZD', name: 'Samarkand', country: 'UZ', lat: 39.9541, lon: 66.4556, volume: 0.2, type: 'passenger' }, // Registan — historic heart of the Silk Road in the Zarafshan valley
   { code: 'ULN', name: 'Ulaan Baatar', country: 'MN', lat: 47.8869, lon: 106.8881, volume: 0.2, type: 'passenger' },
   { code: 'VVO', name: 'Vladivostok', country: 'RU', lat: 45.8734, lon: 131.9193, volume: 0.3, type: 'passenger' },

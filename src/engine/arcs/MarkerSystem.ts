@@ -30,6 +30,19 @@ const LABEL_SCALE_X = 0.09;
 const LABEL_SCALE_Y = 0.024;
 const ELEVATION = 1.012; // dot slightly above surface to avoid z-fighting
 
+/**
+ * Per-city latitude offsets for marker positioning only (does not affect
+ * arc endpoints or geographic data). Used to prevent visual clutter when
+ * nearby airports' markers overlap at certain globe orientations.
+ * Offset is in degrees latitude; positive values nudge markers northward.
+ */
+const MARKER_LAT_OFFSETS: Record<string, number> = {
+  // Central Asia: Tashkent and Bishkek markers overlap with Nur-Sultan (NQZ)
+  // and other regional hubs; shift slightly north for visual separation
+  'TAS': 2.5,
+  'FRU': 2.5,
+};
+
 const TYPE_COLORS: Record<HubCity['type'], number> = {
   passenger: 0x4a90d9, // blue
   cargo: 0xff9800, // amber
@@ -146,8 +159,11 @@ export class MarkerSystem {
     const markerGroup = new THREE.Group();
     markerGroup.name = `marker-${city.code}`;
 
-    // Position on the globe surface (uses the same convention as arc endpoints).
-    const surfacePos = latLonToSpherical(city.lat, city.lon, this.radius);
+    // Position on the globe surface. Apply a per-city lat offset (if any) to
+    // avoid visual clutter with nearby markers; this does NOT change the
+    // underlying geographic coordinates used for arc endpoints.
+    const displayLat = city.lat + (MARKER_LAT_OFFSETS[city.code] ?? 0);
+    const surfacePos = latLonToSpherical(displayLat, city.lon, this.radius);
 
     // Dot at the surface, slightly elevated to avoid z-fighting with the globe
     const dot = new THREE.Mesh(this.dotGeometry, this.getDotMaterial(city.type));
