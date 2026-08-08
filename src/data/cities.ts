@@ -24,7 +24,7 @@ export interface HubCity {
 }
 
 /**
- * 43 major global aviation and logistics hubs across all continents.
+ * 51 major global aviation and logistics hubs across all continents.
  * Sorted by continent for readability.
  */
 export const HUB_CITIES: readonly HubCity[] = [
@@ -56,6 +56,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'ILM', name: 'Wilmington', country: 'US', lat: 34.4134, lon: -77.9115, volume: 0.25, type: 'passenger' }, // Cape Fear region, North Carolina
   { code: 'IAD', name: 'Washington Dulles', country: 'US', lat: 38.9531, lon: -77.4565, volume: 0.86, type: 'mixed' }, // Washington DC metro area, United Airlines hub
   { code: 'MSY', name: 'New Orleans', country: 'US', lat: 29.9844, lon: -90.2589, volume: 0.55, type: 'passenger' }, // Gulf Coast hub, Louis Armstrong International Airport
+  { code: 'STL', name: 'St. Louis', country: 'US', lat: 38.7494, lon: -90.5089, volume: 0.55, type: 'mixed' }, // Mississippi River corridor — links with New Orleans (MSY) and Minneapolis (MSP) along the great Mississippi
   { code: 'CUN', name: 'Cancun', country: 'MX', lat: 21.0470, lon: -86.8640, volume: 0.55, type: 'passenger' },
 
   // -- South America --
@@ -95,6 +96,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'WAW', name: 'Warsaw', country: 'PL', lat: 52.1780, lon: 20.9810, volume: 0.5, type: 'passenger' },
   { code: 'KBP', name: 'Kiev', country: 'UA', lat: 50.2839, lon: 30.3273, volume: 0.45, type: 'passenger' },
   { code: 'ATH', name: 'Athens', country: 'GR', lat: 37.4300, lon: 23.7500, volume: 0.25, type: 'passenger' }, // Greece
+  { code: 'VCE', name: 'Venice', country: 'IT', lat: 45.5389, lon: 12.3385, volume: 0.4, type: 'passenger' }, // Historic terminus of the Silk Road maritime routes
 
   // -- Ring of Fire --
   { code: 'PTY', name: 'Panama City', country: 'PA', lat: 8.9712, lon: -79.5595, volume: 0.5, type: 'passenger' },
@@ -152,6 +154,17 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'IWO', name: 'Iwo Jima', country: 'JP', lat: 24.4667, lon: 141.3333, volume: 0.05, type: 'cargo' }, // Volcanic island, US/Japan Military Base
   { code: 'PVG', name: 'Shanghai', country: 'CN', lat: 31.1451, lon: 121.7048, volume: 0.9, type: 'mixed' },
   { code: 'PEK', name: 'Beijing', country: 'CN', lat: 40.0724, lon: 116.5972, volume: 0.8, type: 'mixed' },
+  // ──────────────────────────────────────────────────────────────────────────────
+  // ★ SIGNIFICANT HISTORICAL & GEOGRAPHIC NOTE ── SILK ROAD REPRESENTATION ★
+  // The big gaps are the Chinese eastern starting point (no Xi'an/Urumqi/Kashgar)
+  // and the Southern Caucasus/Central Asian interior route. Adding XIY (Xi'an),
+  // URC (Urumqi), KHG (Kashgar), ALA (Almaty), SZD (Samarkand), and VCE (Venice)
+  // would complete a proper Silk Road representation across the dashboard.
+  // The route traces: XIY → URC → KHG → ALA → TAS → FRU → ASB → IKA → BGW → IST → VCE
+  // ──────────────────────────────────────────────────────────────────────────────
+  { code: 'XIY', name: 'Xi\'an', country: 'CN', lat: 34.4191, lon: 108.7192, volume: 0.55, type: 'passenger' }, // Ancient Chang'an — traditional eastern terminus of the Silk Road
+  { code: 'URC', name: 'Urumqi', country: 'CN', lat: 43.9127, lon: 87.4602, volume: 0.45, type: 'passenger' }, // Xinjiang — western China gateway to Central Asia
+  { code: 'KHG', name: 'Kashgar', country: 'CN', lat: 39.5138, lon: 75.9613, volume: 0.25, type: 'passenger' }, // Far-west China, closest major airport to the old Silk Road passes
   { code: 'SGN', name: 'Ho Chi Minh', country: 'VN', lat: 10.8195, lon: 106.6525, volume: 0.45, type: 'passenger' },
   { code: 'HKG', name: 'Hong Kong', country: 'HK', lat: 22.3089, lon: 113.9140, volume: 0.6, type: 'mixed' },
   { code: 'ICN', name: 'Seoul', country: 'KR', lat: 37.4602, lon: 127.0286, volume: 0.72, type: 'passenger' },
@@ -165,10 +178,12 @@ export const HUB_CITIES: readonly HubCity[] = [
   // -- Former Soviet Muslim republics (Central Asia) --
   { code: 'GYD', name: 'Baku', country: 'AZ', lat: 40.3777, lon: 49.8060, volume: 0.35, type: 'mixed' },
   { code: 'NQZ', name: 'Nur-Sultan', country: 'KZ', lat: 51.1657, lon: 71.4312, volume: 0.25, type: 'mixed' },
+  { code: 'ALA', name: 'Almaty', country: 'KZ', lat: 43.3215, lon: 77.0506, volume: 0.35, type: 'mixed' }, // Kazakhstan — Silk Road route through the Tien Shan mountains
   { code: 'FRU', name: 'Bishkek', country: 'KG', lat: 42.8333, lon: 74.5756, volume: 0.2, type: 'mixed' },
   { code: 'RND', name: 'Dushanbe', country: 'TJ', lat: 38.5367, lon: 68.7893, volume: 0.15, type: 'passenger' },
   { code: 'ASB', name: 'Ashgabat', country: 'TM', lat: 37.6603, lon: 58.3937, volume: 0.15, type: 'passenger' },
   { code: 'TAS', name: 'Tashkent', country: 'UZ', lat: 41.2574, lon: 69.2907, volume: 0.3, type: 'mixed' },
+  { code: 'SZD', name: 'Samarkand', country: 'UZ', lat: 39.9541, lon: 66.4556, volume: 0.2, type: 'passenger' }, // Registan — historic heart of the Silk Road in the Zarafshan valley
   { code: 'ULN', name: 'Ulaan Baatar', country: 'MN', lat: 47.8869, lon: 106.8881, volume: 0.2, type: 'passenger' },
   { code: 'VVO', name: 'Vladivostok', country: 'RU', lat: 45.8734, lon: 131.9193, volume: 0.3, type: 'passenger' },
 
