@@ -14,6 +14,7 @@ import { StatCards } from '@/ui/StatCards';
 import { RouteTicker } from '@/ui/RouteTicker';
 import { HUDOverlay } from '@/ui/HUDOverlay';
 import { LatLonReadout } from '@/ui/LatLonReadout';
+import { GangesRiver } from '@/engine/globe/GangesRiver';
 
 /**
  * Core dashboard orchestrator.
@@ -68,6 +69,9 @@ export class EarthDashboard {
   private hudOverlay!: HUDOverlay;
   private latLonReadout!: LatLonReadout;
   private airportPopup!: AirportPopup;
+
+  // -- Ganges River highlight
+  private gangesRiver!: GangesRiver;
 
   // -- Cinematic camera
   private cameraDemo!: CameraDemo;
@@ -336,6 +340,11 @@ export class EarthDashboard {
     // affects the globe texture, markers, arcs, and atmosphere equally.
     const AXIAL_TILT = THREE.MathUtils.degToRad(23.44);
     this.globeGroup.rotation.x = AXIAL_TILT;
+
+    // Initialize the Ganges River highlight, added to the marker group
+    // so it rotates with the globe
+    this.gangesRiver = new GangesRiver(1.012);
+    this.markerSystem.getGroup().add(this.gangesRiver.getGroup());
   }
 
   // -- Atmosphere
@@ -546,6 +555,9 @@ export class EarthDashboard {
       this.atmosphere.setSunDirection(sunDir);
       this.atmosphere.updateTime(this.clock.elapsedTime);
     }
+
+    // Highlight the Ganges River when India is on the night side
+    this.gangesRiver.update(sunDir);
 
     // Rotate the globe on its tilted axis for daily rotation
     if (this.isTimeDriven) {
