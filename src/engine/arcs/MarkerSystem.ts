@@ -37,10 +37,9 @@ const ELEVATION = 1.012; // dot slightly above surface to avoid z-fighting
  * Offset is in degrees latitude; positive values nudge markers northward.
  */
 const MARKER_LAT_OFFSETS: Record<string, number> = {
-  // Central Asia: Tashkent and Bishkek markers overlap with Nur-Sultan (NQZ)
-  // and other regional hubs; shift slightly north for visual separation
+  // Central Asia: Tashkent marker visually overlaps with Nur-Sultan (NQZ);
+  // shift slightly north for visual separation
   'TAS': 2.5,
-  'FRU': 2.5,
 };
 
 const TYPE_COLORS: Record<HubCity['type'], number> = {
