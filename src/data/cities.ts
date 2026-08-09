@@ -32,6 +32,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'TQN', name: 'Luna', country: 'XA', lat: 0.6741, lon: 23.4730, volume: 0.5, type: 'mixed' },
 
   // -- North America --
+  { code: 'KJSC', name: 'Kennedy Space Center', country: 'US', lat: 28.5733, lon: -80.6490, volume: 0.3, type: 'cargo' }, // Cape Canaveral, Florida — NASA spaceport
   { code: 'JFK', name: 'New York', country: 'US', lat: 40.6413, lon: -73.7781, volume: 1.0, type: 'passenger' },
   { code: 'LAX', name: 'Los Angeles', country: 'US', lat: 33.9416, lon: -118.4085, volume: 0.95, type: 'passenger' },
   { code: 'HNL', name: 'Honolulu', country: 'US', lat: 21.3099, lon: -157.9224, volume: 0.45, type: 'passenger' },
@@ -177,6 +178,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'NAN', name: 'Nadi', country: 'FJ', lat: -17.7110, lon: 177.4830, volume: 0.3, type: 'passenger' }, // Fiji
 
   // -- Former Soviet Muslim republics (Central Asia) --
+  { code: 'BAY', name: 'Baikonur', country: 'KZ', lat: 45.6153, lon: 63.6010, volume: 0.15, type: 'cargo' }, // Baikonur Cosmodrome — Russia's launch facility (leased from Kazakhstan)
   { code: 'GYD', name: 'Baku', country: 'AZ', lat: 40.3777, lon: 49.8060, volume: 0.35, type: 'mixed' },
   { code: 'NQZ', name: 'Nur-Sultan', country: 'KZ', lat: 51.1657, lon: 71.4312, volume: 0.25, type: 'mixed' },
   { code: 'ALA', name: 'Almaty', country: 'KZ', lat: 43.3215, lon: 77.0506, volume: 0.35, type: 'mixed' }, // Kazakhstan — Silk Road route through the Tien Shan mountains
