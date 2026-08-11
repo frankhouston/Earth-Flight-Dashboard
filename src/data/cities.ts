@@ -24,7 +24,7 @@ export interface HubCity {
 }
 
 /**
- * 54 major global aviation and logistics hubs across all continents.
+ * 55 major global aviation and logistics hubs across all continents.
  * Sorted by continent for readability.
  */
 export const HUB_CITIES: readonly HubCity[] = [
@@ -176,6 +176,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'DEL', name: 'Delhi', country: 'IN', lat: 28.5665, lon: 77.1031, volume: 0.48, type: 'passenger' },
   { code: 'BOM', name: 'Mumbai', country: 'IN', lat: 19.0907, lon: 72.8631, volume: 0.42, type: 'passenger' },
   { code: 'CMB', name: 'Colombo', country: 'LK', lat: 7.1807, lon: 79.8847, volume: 0.4, type: 'passenger' }, // Ceylon (Sri Lanka) — Bandaranaike International Airport
+  { code: 'DAC', name: 'Dhaka', country: 'BD', lat: 23.8387, lon: 90.3881, volume: 0.45, type: 'passenger' }, // Capital of Bangladesh — Hazrat Shahjalal International Airport
   { code: 'MNL', name: 'Manila', country: 'PH', lat: 14.5078, lon: 121.2375, volume: 0.5, type: 'passenger' },
   { code: 'NAN', name: 'Nadi', country: 'FJ', lat: -17.7110, lon: 177.4830, volume: 0.3, type: 'passenger' }, // Fiji
 
