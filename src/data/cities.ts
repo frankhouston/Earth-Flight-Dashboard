@@ -24,7 +24,7 @@ export interface HubCity {
 }
 
 /**
- * 52 major global aviation and logistics hubs across all continents.
+ * 54 major global aviation and logistics hubs across all continents.
  * Sorted by continent for readability.
  */
 export const HUB_CITIES: readonly HubCity[] = [
@@ -98,6 +98,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'WAW', name: 'Warsaw', country: 'PL', lat: 52.1780, lon: 20.9810, volume: 0.5, type: 'passenger' },
   { code: 'KBP', name: 'Kiev', country: 'UA', lat: 50.2839, lon: 30.3273, volume: 0.45, type: 'passenger' },
   { code: 'ATH', name: 'Athens', country: 'GR', lat: 37.4300, lon: 23.7500, volume: 0.25, type: 'passenger' }, // Greece
+  { code: 'TIA', name: 'Tirana', country: 'AL', lat: 41.3917, lon: 19.8108, volume: 0.3, type: 'passenger' }, // Capital of Albania
   { code: 'VCE', name: 'Venice', country: 'IT', lat: 45.5389, lon: 12.3385, volume: 0.4, type: 'passenger' }, // Historic terminus of the Silk Road maritime routes
 
   // -- Ring of Fire --
@@ -174,6 +175,7 @@ export const HUB_CITIES: readonly HubCity[] = [
   { code: 'BKK', name: 'Bangkok', country: 'TH', lat: 13.6507, lon: 100.7523, volume: 0.62, type: 'passenger' },
   { code: 'DEL', name: 'Delhi', country: 'IN', lat: 28.5665, lon: 77.1031, volume: 0.48, type: 'passenger' },
   { code: 'BOM', name: 'Mumbai', country: 'IN', lat: 19.0907, lon: 72.8631, volume: 0.42, type: 'passenger' },
+  { code: 'CMB', name: 'Colombo', country: 'LK', lat: 7.1807, lon: 79.8847, volume: 0.4, type: 'passenger' }, // Ceylon (Sri Lanka) — Bandaranaike International Airport
   { code: 'MNL', name: 'Manila', country: 'PH', lat: 14.5078, lon: 121.2375, volume: 0.5, type: 'passenger' },
   { code: 'NAN', name: 'Nadi', country: 'FJ', lat: -17.7110, lon: 177.4830, volume: 0.3, type: 'passenger' }, // Fiji
 
